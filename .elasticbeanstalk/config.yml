@@ -1,7 +1,4 @@
-branch-defaults:
-  default:
-    environment: test-dev
-    group_suffix: null
+
 global:
   application_name: AWSSERVER
   branch: null
