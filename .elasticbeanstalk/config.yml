@@ -1,4 +1,9 @@
-
+branch-defaults:
+  default:
+    environment: test-dev
+    group_suffix: null
+  master:
+    environment: test-dev
 global:
   application_name: AWSSERVER
   branch: null
