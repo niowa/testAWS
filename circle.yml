@@ -1,0 +1,23 @@
+machine:
+  node:
+    version: 8.7.0
+
+dependencies:
+  pre:
+    - sudo apt-get install python-dev
+    - sudo pip install 'awsebcli==3.7.4' --force-reinstall
+
+test:
+  override:
+    - npm test
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - rm -rf /home/ubuntu/.aws
+      - chmod +x ./scripts/setup-eb.sh
+      - ./scripts/setup-eb.sh
+      - eb deploy
+
+
