@@ -18,6 +18,7 @@ deployment:
       - rm -rf /home/ubuntu/.aws
       - chmod +x ./scripts/setup-eb.sh
       - ./scripts/setup-eb.sh
+      - eb use test-env
       - eb deploy
 
 
