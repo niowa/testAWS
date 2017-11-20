@@ -1,9 +1,6 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var moment = require('moment');
-var pjson = require('./package.json');
-console.log(pjson.version);
-console.log(process.version)
 
 // var Agenda = require('agenda');
 // var MongoClient = require('mongodb');
@@ -153,23 +150,21 @@ app.get('/test', function (req, res) {
 })
 
 app.get('/error', function(req, res) {
-    // req.user_id = "niowa";
-    throw new Error('Hello World');
+  res.send('error');
 });
 
 app.get('/simple', function(req, res) {
-    er;
     res.send('Get request');
 })
 
 app.get('/exception', function (req, res) {
-    try {
-      doSomething();
-    } catch (e) {
-        console.log('ERROR')
-        rollbar.error(e, req);
-        rollbar.warning(e, req);
-    }
+    // try {
+    //   doSomething();
+    // } catch (e) {
+    //     console.log('ERROR')
+    //     rollbar.error(e, req);
+    //     rollbar.warning(e, req);
+    // }
   res.send('Get request to the homepage');
 });
 

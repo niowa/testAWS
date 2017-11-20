@@ -18,6 +18,6 @@ deployment:
       - rm -rf /home/ubuntu/.aws
       - chmod +x ./scripts/setup-eb.sh
       - ./scripts/setup-eb.sh
-      - eb deploy
+      - yarn deploy
 
 

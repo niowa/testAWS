@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "exit 0",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "eb deploy --timeout 20"
   },
   "author": "",
   "license": "ISC",
