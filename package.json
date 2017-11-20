@@ -5,11 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "exit 0",
-	 "start": "node server.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "4.16.2"
+    "agenda": "1.0.3",
+    "background-task": "2.0.1",
+    "express": "4.16.2",
+    "kue": "0.11.6",
+    "kue-scheduler": "0.7.4",
+    "moment": "2.19.1",
+    "mongodb": "2.2.33",
+    "pg-boss": "2.3.3",
+    "redis": "2.8.0",
+    "rollbar": "2.3.1"
   }
 }

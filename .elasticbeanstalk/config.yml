@@ -1,11 +1,11 @@
 branch-defaults:
   default:
-    environment: test-dev
+    environment: aws-test-env
     group_suffix: null
   master:
-    environment: test-dev
+    environment: aws-test-env
 global:
-  application_name: AWSSERVER
+  application_name: test-aws
   branch: null
   default_ec2_keyname: MyKeyPair
   default_platform: Node.js
