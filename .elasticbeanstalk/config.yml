@@ -6,15 +6,14 @@ branch-defaults:
     environment: aws-test-env
 global:
   application_name: test-aws
-  branch: null
-  default_ec2_keyname: MyKeyPair
-  default_platform: Node.js
+  default_ec2_keyname: null
+  default_platform: arn:aws:elasticbeanstalk:us-east-1::platform/Node.js running on
+    64bit Amazon Linux/4.3.0
   default_region: us-west-2
   include_git_submodules: true
   instance_profile: null
   platform_name: null
   platform_version: null
-  profile: null
-  repository: null
-  sc: null
+  profile: eb-cli
+  sc: git
   workspace_type: Application
