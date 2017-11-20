@@ -142,19 +142,19 @@ var moment = require('moment');
 // });
 
 app.get('/', function(req, res) {
-    res.sendfile('index.html');
+    res.status(200).sendfile('index.html');
 });
 
 app.get('/test', function (req, res) {
-     res.send(process.version)
+     res.status(200).send(process.version)
 })
 
 app.get('/error', function(req, res) {
-  res.send('error');
+  res.status(200).send('error');
 });
 
 app.get('/simple', function(req, res) {
-    res.send('Get request');
+    res.status(200).send('Get request');
 })
 
 app.get('/exception', function (req, res) {
@@ -165,7 +165,7 @@ app.get('/exception', function (req, res) {
     //     rollbar.error(e, req);
     //     rollbar.warning(e, req);
     // }
-  res.send('Get request to the homepage');
+  res.status(200).send('Get request to the homepage');
 });
 
 // app.use(rollbar.errorHandler());
