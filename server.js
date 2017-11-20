@@ -146,6 +146,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/test', function (req, res) {
+  console.log(process);
      res.status(200).send(process.version)
 })
 
@@ -154,6 +155,10 @@ app.get('/error', function(req, res) {
 });
 
 app.get('/simple', function(req, res) {
+    async function a() {
+      console.log('oj')
+    }
+    a();
     res.status(200).send('Get request');
 })
 
