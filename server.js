@@ -155,11 +155,12 @@ app.get('/error', function(req, res) {
 });
 
 app.get('/simple', function(req, res) {
+    var a = "hello"
     async function a() {
-      console.log('oj')
+      a = 'KEK'
     }
     a();
-    res.status(200).send('Get request');
+    res.status(200).send('Get request ' + a);
 })
 
 app.get('/exception', function (req, res) {
