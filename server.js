@@ -1,12 +1,81 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var moment = require('moment');
+const args = [];
+args.push('zsb');
+var childProcess = require('child_process').fork('./fork', args);
 
+// var childProcess = require('child_process').fork('./creators', args);
+
+// console.log(childProcess)
 // var Agenda = require('agenda');
 // var MongoClient = require('mongodb');
 
-// const PgBoss = require('pg-boss');
-// const boss = new PgBoss('postgres://niowa:leska7480311@localhost/wallet_api');
+// const boss = new PgBoss('postgres://niowa:leska7480311@aa94pgc5cglkpm.cxghg3astuwi.us-west-2.rds.amazonaws.com:5432/ebdb');
+
+
+// PG-BOSS
+
+//// PG-BOSS
+console.log('server: ' + process.pid);
+
+cchildProcess.send('start');
+
+childProcess.on('message', function (msg) {
+  console.log('SERVER');
+  console.log(msg);
+});
+
+
+app.get('/', function(req, res) {
+    res.status(200).sendfile('index.html');
+});
+
+app.get('/create', function (req, res) {
+  childProcess.send('create');
+});
+
+app.get('/del', function (req, res) {
+  childProcess.kill();
+  // childProcessWorker.kill();
+  console.log('ko');
+  res.send('DEL');
+})
+
+app.get('/test', function (req, res) {
+  console.log(process);
+     res.status(200).send(process.version)
+})
+
+app.get('/error', function(req, res) {
+  res.status(200).send('error');
+});
+
+app.get('/simple', function(req, res) {
+    var b = "hello"
+    async function a() {
+      a = 'KEK'
+    }
+    a();
+    res.status(200).send('Get request ' + b);
+})
+
+app.get('/exception', function (req, res) {
+    // try {
+    //   doSomething();
+    // } catch (e) {
+    //     console.log('ERROR')
+    //     rollbar.error(e, req);
+    //     rollbar.warning(e, req);
+    // }
+  res.status(200).send('Get request to the homepage');
+});
+
+// app.use(rollbar.errorHandler());
+
+http.listen(4000, function(){
+    console.log('listening on *:4000');
+});
 // var redis = require("redis"),
 //     client = redis.createClient();
 // var kue = require('kue')
@@ -57,46 +126,6 @@ var moment = require('moment');
 
 //// AGENDA
 
-//// PG-BOSS
-// boss.on('error', onError);
-
-// boss.start()
-//   .then(ready)
-//   .catch(onError);
-
-
-// function ready() {
-//   boss.publish('some-job', {param1: 'parameter1'}, {expireIn: "2 second", retryLimit: 1})
-//     .then(jobId => console.log(`created some-job ${jobId}`))
-//     .catch(onError);
-
-//   boss.subscribe('some-job', someJobHandler)
-//     .then(() => console.log('subscribed to some-job'))
-//     .catch(onError);
-// }
-
-// function someJobHandler(job) {
-//   console.log(`received ${job.name} ${job.id}`);
-//   console.log(`data: ${JSON.stringify(job.data)}`);
-//   console.log(boss);
-//    // if (a != 5) {
-//    //      job.done(new Error('kek'))
-//    //        .then(() => {
-//    //          console.log(`some-job ${job.id} fail`)
-//    //        })
-//    //        .catch(onError);
-//    //    }
-//   job.done()
-//     .then(() => {
-//       console.log(`some-job ${job.id} completed`)
-//     })
-//     .catch(onError);
-// }
-
-// function onError(error) {
-//   console.error(error);
-// }
-//// PG-BOSS
 
 //// KUE.JS
 // var job = queue.create('email', {
@@ -140,46 +169,6 @@ var moment = require('moment');
 //     });
 //     client.quit();
 // });
-
-app.get('/', function(req, res) {
-    res.status(200).sendfile('index.html');
-});
-
-app.get('/test', function (req, res) {
-  console.log(process);
-     res.status(200).send(process.version)
-})
-
-app.get('/error', function(req, res) {
-  res.status(200).send('error');
-});
-
-app.get('/simple', function(req, res) {
-    var a = "hello"
-    async function a() {
-      a = 'KEK'
-    }
-    a();
-    res.status(200).send('Get request ' + a);
-})
-
-app.get('/exception', function (req, res) {
-    // try {
-    //   doSomething();
-    // } catch (e) {
-    //     console.log('ERROR')
-    //     rollbar.error(e, req);
-    //     rollbar.warning(e, req);
-    // }
-  res.status(200).send('Get request to the homepage');
-});
-
-// app.use(rollbar.errorHandler());
-
-http.listen(8081, function(){
-    console.log('listening on *:8081');
-});
-
 
 // var Rollbar = require('rollbar');
 

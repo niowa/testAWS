@@ -1,13 +1,13 @@
 branch-defaults:
   default:
-    environment: aws-test-env
+    environment: job-aws-env
     group_suffix: null
   master:
-    environment: aws-test-env
+    environment: job-aws-env
 global:
-  application_name: test-aws
+  application_name: job-aws
   default_ec2_keyname: null
-  default_platform: arn:aws:elasticbeanstalk:us-east-1::platform/Node.js running on
+  default_platform: arn:aws:elasticbeanstalk:us-west-2::platform/Node.js running on
     64bit Amazon Linux/4.3.0
   default_region: us-west-2
   include_git_submodules: true

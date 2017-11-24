@@ -19,6 +19,7 @@
     "moment": "2.19.1",
     "mongodb": "2.2.33",
     "pg-boss": "2.3.3",
+    "process-list": "1.2.1",
     "redis": "2.8.0",
     "rollbar": "2.3.1"
   }
