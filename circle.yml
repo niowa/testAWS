@@ -17,7 +17,7 @@ dependencies:
 
 test:
   override:
-    - ./scripts/test.sh
+    - sudo ./scripts/test.sh
 
 deployment:
   production:
