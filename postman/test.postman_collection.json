@@ -1,0 +1,1583 @@
+{
+	"info": {
+		"name": "Test",
+		"_postman_id": "a4dd1f7c-2392-5e00-9d19-bcc48a0873dc",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Tests",
+			"item": [
+				{
+					"name": "profile",
+					"item": [
+						{
+							"name": "Get Profile",
+							"item": [
+								{
+									"name": "Ok",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"data\");",
+													"    pm.expect(jsonData.data).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct user\", function() {",
+													"    pm.expect(jsonData.data).to.have.property(\"user\");",
+													"    pm.expect(jsonData.data.user).to.be.an(\"object\");",
+													"    pm.expect(jsonData.data.user.email).to.equal(pm.environment.get(\"email\"));",
+													"    pm.expect(jsonData.data.user.name).to.equal(pm.environment.get(\"name\"));",
+													"})",
+													"const host = pm.environment.get(\"host\");",
+													"const echoPostRequest = {",
+													"  url: `${host}/profile`,",
+													"  method: 'DELETE',",
+													"  header: {",
+													"    \"x-access-token\": pm.environment.get(\"token\")",
+													"  },",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    pm.environment.unset(\"token\");",
+													"    pm.environment.unset(\"email\");",
+													"    pm.environment.unset(\"name\");",
+													"    pm.environment.unset(\"password\");",
+													"});",
+													"",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"email\", `postman-user-email-${new Date().getTime()}@mail.com`);",
+													"pm.environment.set(\"name\", \"postman-test\");",
+													"pm.environment.set(\"password\", \"postman1\");",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/api/profile`,",
+													"  method: 'POST',",
+													"  header: {",
+													"    'Content-Type': 'application/json'",
+													"  },",
+													"  body: {",
+													"    mode: 'raw',",
+													"    raw: JSON.stringify({",
+													"        user: {",
+													"            email: pm.environment.get(\"email\"),",
+													"            name: pm.environment.get(\"name\"),",
+													"            password: pm.environment.get(\"password\")",
+													"        }",
+													"    })",
+													"  }",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    const response = res.json();",
+													"    const token = response.data.token;",
+													"    pm.environment.set(\"token\", token);",
+													"});",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Sould return information about user"
+									},
+									"response": []
+								},
+								{
+									"name": "Invalid Token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have error data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct error message\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"auth.invalid_token\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data.error.name).to.equal(\"JsonWebTokenError\");",
+													"    pm.expect(jsonData.error.data.error.message).to.equal(\"invalid token\");",
+													"})",
+													"",
+													"pm.environment.unset(\"token\");",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"token\", 'aaa.bbb.ccc');",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad status if token is invalid"
+									},
+									"response": []
+								},
+								{
+									"name": "Incorrect Token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have error data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct error message\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"auth.invalid_token\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data.error.name).to.equal(\"JsonWebTokenError\");",
+													"    pm.expect(jsonData.error.data.error.message).to.equal(\"jwt malformed\");",
+													"})",
+													"",
+													"pm.environment.unset(\"token\");",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"token\", 'aaa.bbb');",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad status if token is invalid"
+									},
+									"response": []
+								},
+								{
+									"name": "Empty Token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "431621eb-004a-4075-8d9c-77e93e735d18",
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have error data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct error message\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"auth.invalid_token\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data.error.name).to.equal(\"JsonWebTokenError\");",
+													"    pm.expect(jsonData.error.data.error.message).to.equal(\"jwt must be provided\");",
+													"})",
+													"",
+													"pm.environment.unset(\"token\");",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "4568e4ad-0569-4a76-904d-c16aa7617633",
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"token\", '');",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad status if token is invalid"
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Create Profile",
+							"item": [
+								{
+									"name": "Ok",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"data\");",
+													"    pm.expect(jsonData.data).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a token\", function() {",
+													"    pm.expect(jsonData.data).to.have.property(\"token\");",
+													"    pm.expect(jsonData.data.token).to.be.a(\"string\");",
+													"})",
+													"",
+													"pm.test(\"Data have a email token\", function() {",
+													"    pm.expect(jsonData.data).to.have.property(\"email_confirmation_token\");",
+													"    pm.expect(jsonData.data.token).to.be.a(\"string\");",
+													"})",
+													"",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": \"postman-create@mail.com\",\n    \"name\": \"postman-create\",\n    \"password\": \"postman1\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User Is Not Object",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.error).to.equal(\"User is not an object\");",
+													"})",
+													"",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : \"bad\"\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if passed user is not object\r\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Email Name Password Is Not String",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.name).to.equal(\"name should be a string\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.email).to.equal(\"email should be a string\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.password).to.equal(\"password should be a string\");",
+													"})",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}",
+												"disabled": true
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": 1234,\n    \"name\": 1234,\n    \"password\": 1234\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if email or name or password is not string\r\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Email Name Password Is Empty",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.name).to.equal(\"name cannot be empty\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.email).to.equal(\"email cannot be empty\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.password).to.equal(\"password cannot be empty\");",
+													"})",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}",
+												"disabled": true
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": \"\",\n    \"name\": \"\",\n    \"password\": \"\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if email or username or password is empty\r\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Short Password",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.password).to.equal(\"Password must be minimum of 6 characters length.\");",
+													"})",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": \"postman-email@mail.com\",\n    \"name\": \"postman-name\",\n    \"password\": \"post\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if passed password has a length less than 6\r\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Password Without Digits",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.password).to.equal(\"Password must contain at least 1 digit.\");",
+													"})",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": \"postman-email@mail.com\",\n    \"name\": \"postman-name\",\n    \"password\": \"postpost\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if passed password is not has a digits\r\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Password Without Letters",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userValidationInfo.password).to.equal(\"Password must contain at least 1 letter.\");",
+													"})",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": \"postman-email@mail.com\",\n    \"name\": \"postman-name\",\n    \"password\": \"111111\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if passed password is not has a letters\r\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Duplicate User",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.email_is_in_use\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"email\");",
+													"    pm.expect(jsonData.error.data.email).to.equal(pm.environment.get(\"email\"));",
+													"})",
+													"",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/profile`,",
+													"  method: 'DELETE',",
+													"  header: {",
+													"    \"x-access-token\": pm.environment.get(\"token\")",
+													"  },",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    pm.environment.unset(\"token\");",
+													"    pm.environment.unset(\"email\");",
+													"    pm.environment.unset(\"name\");",
+													"    pm.environment.unset(\"password\");",
+													"});",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"email\", \"postman-test@mail.ru\");",
+													"pm.environment.set(\"name\", \"postman-test\");",
+													"pm.environment.set(\"password\", \"postman1\");",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/api/profile`,",
+													"  method: 'POST',",
+													"  header: {",
+													"    'Content-Type': 'application/json'",
+													"  },",
+													"  body: {",
+													"    mode: 'raw',",
+													"    raw: JSON.stringify({",
+													"        user: {",
+													"            email: pm.environment.get(\"email\"),",
+													"            name: pm.environment.get(\"name\"),",
+													"            password: pm.environment.get(\"password\")",
+													"        }",
+													"    })",
+													"  }",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    const response = res.json();",
+													"    const token = response.data.token;",
+													"    pm.environment.set(\"token\", token);",
+													"});",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\" : {\n    \"email\": \"{{email}}\",\n    \"name\": \"{{name}}\",\n    \"password\": \"{{password}}\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if passed name is already in use.\r\n"
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Update Profile",
+							"item": [
+								{
+									"name": "Ok",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"data\");",
+													"    pm.expect(jsonData.data).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct update\", function() {",
+													"    pm.expect(jsonData.data).to.have.property(\"result\");",
+													"    pm.expect(jsonData.data.result).to.be.an(\"object\");",
+													"    pm.expect(jsonData.data.result.email).to.equal(pm.environment.get(\"email\"));",
+													"    pm.expect(jsonData.data.result.name).to.equal(pm.environment.get(\"updateName\"));",
+													"})",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/profile`,",
+													"  method: 'DELETE',",
+													"  header: {",
+													"    \"x-access-token\": pm.environment.get(\"token\")",
+													"  },",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    pm.environment.unset(\"token\");",
+													"    pm.environment.unset(\"email\");",
+													"    pm.environment.unset(\"name\");",
+													"    pm.environment.unset(\"updateName\");",
+													"    pm.environment.unset(\"password\");",
+													"});",
+													"",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"email\", `postman-user-email-${new Date().getTime()}@mail.com`);",
+													"pm.environment.set(\"name\", \"postman-test\");",
+													"pm.environment.set(\"password\", \"postman1\");",
+													"pm.environment.set(\"updateName\", \"postman update name\");",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/api/profile`,",
+													"  method: 'POST',",
+													"  header: {",
+													"    'Content-Type': 'application/json'",
+													"  },",
+													"  body: {",
+													"    mode: 'raw',",
+													"    raw: JSON.stringify({",
+													"        user: {",
+													"            email: pm.environment.get(\"email\"),",
+													"            name: pm.environment.get(\"name\"),",
+													"            password: pm.environment.get(\"password\")",
+													"        }",
+													"    })",
+													"  }",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    const response = res.json();",
+													"    const token = response.data.token;",
+													"    pm.environment.set(\"token\", token);",
+													"});",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"name\": \"{{updateName}}\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Update user name"
+									},
+									"response": []
+								},
+								{
+									"name": "Username Is Not Passed",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userUpdateValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userUpdateValidationInfo.error).to.equal(\"User update data is not passed\");",
+													"})",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/profile`,",
+													"  method: 'DELETE',",
+													"  header: {",
+													"    \"x-access-token\": pm.environment.get(\"token\")",
+													"  },",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    pm.environment.unset(\"token\");",
+													"    pm.environment.unset(\"email\");",
+													"    pm.environment.unset(\"name\");",
+													"    pm.environment.unset(\"password\");",
+													"});",
+													"",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"email\", `postman-user-email-${new Date().getTime()}@mail.com`);",
+													"pm.environment.set(\"name\", \"postman-test\");",
+													"pm.environment.set(\"password\", \"postman1\");",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/api/profile`,",
+													"  method: 'POST',",
+													"  header: {",
+													"    'Content-Type': 'application/json'",
+													"  },",
+													"  body: {",
+													"    mode: 'raw',",
+													"    raw: JSON.stringify({",
+													"        user: {",
+													"            email: pm.environment.get(\"email\"),",
+													"            name: pm.environment.get(\"name\"),",
+													"            password: pm.environment.get(\"password\")",
+													"        }",
+													"    })",
+													"  }",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    const response = res.json();",
+													"    const token = response.data.token;",
+													"    pm.environment.set(\"token\", token);",
+													"});",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if user for update is not passed"
+									},
+									"response": []
+								},
+								{
+									"name": "Username Is Not String",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userUpdateValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userUpdateValidationInfo.name).to.equal(\"name should be a string\");",
+													"})",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/profile`,",
+													"  method: 'DELETE',",
+													"  header: {",
+													"    \"x-access-token\": pm.environment.get(\"token\")",
+													"  },",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    pm.environment.unset(\"token\");",
+													"    pm.environment.unset(\"email\");",
+													"    pm.environment.unset(\"name\");",
+													"    pm.environment.unset(\"password\");",
+													"});",
+													"",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"email\", `postman-user-email-${new Date().getTime()}@mail.com`);",
+													"pm.environment.set(\"name\", \"postman-test\");",
+													"pm.environment.set(\"password\", \"postman1\");",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/api/profile`,",
+													"  method: 'POST',",
+													"  header: {",
+													"    'Content-Type': 'application/json'",
+													"  },",
+													"  body: {",
+													"    mode: 'raw',",
+													"    raw: JSON.stringify({",
+													"        user: {",
+													"            email: pm.environment.get(\"email\"),",
+													"            name: pm.environment.get(\"name\"),",
+													"            password: pm.environment.get(\"password\")",
+													"        }",
+													"    })",
+													"  }",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    const response = res.json();",
+													"    const token = response.data.token;",
+													"    pm.environment.set(\"token\", token);",
+													"});",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"name\": 1234\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if username is not a string"
+									},
+									"response": []
+								},
+								{
+									"name": "Username Is Empty",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Data have a error\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"profile.invalid_user_data\");",
+													"    pm.expect(jsonData.error.message).to.equal(\"\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data).to.have.property(\"userUpdateValidationInfo\");",
+													"    pm.expect(jsonData.error.data.userUpdateValidationInfo.name).to.equal(\"name cannot be empty\");",
+													"})",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/profile`,",
+													"  method: 'DELETE',",
+													"  header: {",
+													"    \"x-access-token\": pm.environment.get(\"token\")",
+													"  },",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    pm.environment.unset(\"token\");",
+													"    pm.environment.unset(\"email\");",
+													"    pm.environment.unset(\"name\");",
+													"    pm.environment.unset(\"password\");",
+													"});",
+													"",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"email\", `postman-user-email-${new Date().getTime()}@mail.com`);",
+													"pm.environment.set(\"name\", \"postman-test\");",
+													"pm.environment.set(\"password\", \"postman1\");",
+													"",
+													"const host = pm.environment.get(\"host\");",
+													"",
+													"const echoPostRequest = {",
+													"  url: `${host}/api/profile`,",
+													"  method: 'POST',",
+													"  header: {",
+													"    'Content-Type': 'application/json'",
+													"  },",
+													"  body: {",
+													"    mode: 'raw',",
+													"    raw: JSON.stringify({",
+													"        user: {",
+													"            email: pm.environment.get(\"email\"),",
+													"            name: pm.environment.get(\"name\"),",
+													"            password: pm.environment.get(\"password\")",
+													"        }",
+													"    })",
+													"  }",
+													"};",
+													"",
+													"pm.sendRequest(echoPostRequest, function (err, res) {",
+													"    const response = res.json();",
+													"    const token = response.data.token;",
+													"    pm.environment.set(\"token\", token);",
+													"});",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"name\": \"\"\n  }\n}"
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad request if username is empty"
+									},
+									"response": []
+								},
+								{
+									"name": "Invalid Token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have error data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct error message\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"auth.invalid_token\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data.error.name).to.equal(\"JsonWebTokenError\");",
+													"    pm.expect(jsonData.error.data.error.message).to.equal(\"invalid token\");",
+													"})",
+													"",
+													"pm.environment.unset(\"token\");",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"token\", 'aaa.bbb.ccc');",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad status if token is invalid"
+									},
+									"response": []
+								},
+								{
+									"name": "Incorrect Token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have error data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct error message\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"auth.invalid_token\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data.error.name).to.equal(\"JsonWebTokenError\");",
+													"    pm.expect(jsonData.error.data.error.message).to.equal(\"jwt malformed\");",
+													"})",
+													"",
+													"pm.environment.unset(\"token\");",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"token\", 'aaa.bbb');",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad status if token is invalid"
+									},
+									"response": []
+								},
+								{
+									"name": "Empty Token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "72434f5d-31b0-4d8f-a92b-0667715dbb8d",
+												"type": "text/javascript",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Body have error data\", function () {",
+													"    pm.expect(jsonData).to.have.property(\"error\");",
+													"    pm.expect(jsonData.error).to.be.an(\"object\");",
+													"});",
+													"",
+													"pm.test(\"Is correct error message\", function() {",
+													"    pm.expect(jsonData.error.type).to.equal(\"auth.invalid_token\");",
+													"    pm.expect(jsonData.error.data).to.be.an(\"object\");",
+													"    pm.expect(jsonData.error.data.error.name).to.equal(\"JsonWebTokenError\");",
+													"    pm.expect(jsonData.error.data.error.message).to.equal(\"jwt must be provided\");",
+													"})",
+													"",
+													"pm.environment.unset(\"token\");",
+													""
+												]
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "3048e5a9-225a-460c-98a8-e8843ab1ff74",
+												"type": "text/javascript",
+												"exec": [
+													"pm.environment.set(\"token\", '');",
+													""
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "x-access-token",
+												"value": "{{token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{host}}/api/profile",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"profile"
+											]
+										},
+										"description": "Should return bad status if token is invalid"
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}

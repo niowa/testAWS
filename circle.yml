@@ -4,12 +4,20 @@ machine:
 
 dependencies:
   pre:
+    - sudo apt-get update
     - sudo apt-get install python-dev
     - sudo pip install 'awsebcli==3.7.4' --force-reinstall
+  override:
+    - yarn
+    - yarn global add newman
+    - yarn global add gulp-cli
+    - yarn add gulp --dev
+  cache_directories:
+    - ~/.cache/yarn
 
 test:
   override:
-    - yarn test
+    - ./scripts/test
 
 deployment:
   production:
