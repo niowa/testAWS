@@ -17,13 +17,12 @@ dependencies:
 
 test:
   override:
-    - |
-    if [ $CIRCLE_BRANCH = 'prod' ]
-    then
-    chmod +x ./scripts/test.sh;
-    ./scripts/test.sh;
-    fi
-    - dir
+    - if [ $CIRCLE_BRANCH = 'prod' ]; then
+        chmod +x ./scripts/test.sh;
+        ./scripts/test.sh
+      else
+        dir
+      fi
 
 deployment:
   production:
