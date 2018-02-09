@@ -18,10 +18,10 @@ dependencies:
 test:
   override:
     - if [ $CIRCLE_BRANCH = "prod" ]; then
-        chmod +x ./scripts/test.sh;
-        ./scripts/test.sh;
+        chmod +x ./scripts/test;
+        ./scripts/test;
       else
-        chmod +x ./scripts/test.sh;
+        chmod +x ./scripts/test;
       fi
 
 deployment:
