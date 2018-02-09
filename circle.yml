@@ -22,8 +22,6 @@ test:
         dos2unix ./scripts/test.sh;
         chmod +x ./scripts/test.sh;
         ./scripts/test.sh;
-      else
-        dir
       fi
 
 deployment:
