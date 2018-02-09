@@ -32,5 +32,13 @@ deployment:
       - chmod +x ./scripts/setup-eb.sh
       - ./scripts/setup-eb.sh
       - yarn deploy
+development:
+    branch: prod
+    commands:
+      - dir
+      - rm -rf /home/ubuntu/.aws
+      - chmod +x ./scripts/setup-eb.sh
+      - ./scripts/setup-eb.sh
+      - yarn deploy
 
 
