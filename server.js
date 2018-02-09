@@ -19,7 +19,9 @@ var childProcess = require('child_process').fork('./fork', args);
 //// PG-BOSS
 console.log('server: ' + process.pid);
 
-cchildProcess.send('start');
+console.log('kek')
+childProcess.send('start');
+
 
 childProcess.on('message', function (msg) {
   console.log('SERVER');
