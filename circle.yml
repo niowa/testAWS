@@ -18,7 +18,7 @@ dependencies:
 
 test:
   override:
-    - if [ $CIRCLE_BRANCH = 'prod' ]; then
+    - if [ $CIRCLE_BRANCH = "prod" ]; then
         dos2unix ./scripts/test.sh;
         chmod +x ./scripts/test.sh;
         ./scripts/test.sh;
