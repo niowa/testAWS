@@ -20,8 +20,8 @@ test:
     - |
     if [ $CIRCLE_BRANCH = 'prod' ]
     then
-    chmod +x ./scripts/test.sh
-    ./scripts/test.sh
+    chmod +x ./scripts/test.sh;
+    ./scripts/test.sh;
     fi
     - dir
 
