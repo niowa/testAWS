@@ -16,13 +16,9 @@ dependencies:
     - ~/.cache/yarn
 
 test:
-  master:
-    override:
-      dir
-  prod:
-    override:
-      - chmod +x ./scripts/test.sh
-      - ./scripts/test.sh
+  override:
+    - if [$CIRCLE_BRANCH = 'prod']; then chmod +x ./scripts/test.sh; ./scripts/test.sh
+    - dir
 
 deployment:
   production:
@@ -33,7 +29,6 @@ deployment:
       - chmod +x ./scripts/setup-eb.sh
       - ./scripts/setup-eb.sh
       - yarn deploy
-development:
     branch: prod
     commands:
       - dir
