@@ -16,7 +16,10 @@ dependencies:
     - ~/.cache/yarn
 
 test:
-  override:
+  master:
+    override:
+      dir
+  prod:
     - chmod +x ./scripts/test.sh
     - ./scripts/test.sh
 
