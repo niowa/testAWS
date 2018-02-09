@@ -17,12 +17,13 @@ dependencies:
 
 test:
   override:
-    - ./scripts/test
+    - ./scripts/test.sh
 
 deployment:
   production:
     branch: master
     commands:
+      - dir
       - rm -rf /home/ubuntu/.aws
       - chmod +x ./scripts/setup-eb.sh
       - ./scripts/setup-eb.sh
